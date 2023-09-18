@@ -2,7 +2,6 @@ import os
 import sys
 from dataclasses import dataclass
 
-from catboost import CatBoostRegressor
 from sklearn.ensemble import (
     AdaBoostRegressor,
     GradientBoostingRegressor,
@@ -24,10 +23,10 @@ class ModelTrainerConfig:
     trained_model_file_path = os.path.join('artifacts', "model.pkl")
 
 class ModelTrainer:
-    def __init__(self) -> None:
+    def __init__(self):
         self.model_trainer_config = ModelTrainerConfig()
 
-    def initiate_model_trainer(self, train_array, test_array, preprocessor_path):
+    def initiate_model_trainer(self, train_array, test_array):
         try:
             logging.info("Splitting training and test data")
             X_train, y_train, X_test, y_test = (
@@ -42,7 +41,7 @@ class ModelTrainer:
                 "Gradient Boosting": GradientBoostingRegressor(),
                 "Linear Regression": LinearRegression(),
                 "XGBRegressor": XGBRegressor(),
-                "CatBoosting Regressor": CatBoostRegressor(verbose=False),
+
                 "AdaBoost Regressor": AdaBoostRegressor(),
             }
             
@@ -71,11 +70,7 @@ class ModelTrainer:
                     'learning_rate':[.1,.01,.05,.001],
                     'n_estimators': [8,16,32,64,128,256]
                 },
-                "CatBoosting Regressor":{
-                    'depth': [6,8,10],
-                    'learning_rate': [0.01, 0.05, 0.1],
-                    'iterations': [30, 50, 100]
-                },
+               
                 "AdaBoost Regressor":{
                     'learning_rate':[.1,.01,0.5,.001],
                     # 'loss':['linear','square','exponential'],
@@ -85,7 +80,7 @@ class ModelTrainer:
             }
 
             model_report: dict = evaluate_models(X_train=X_train, y_train=y_train, X_test=X_test,
-                                                  y_test=y_test, models = models)
+                                                  y_test=y_test, models = models, param=params)
             
             best_model_score = max(sorted(model_report.values()))
 
@@ -104,8 +99,8 @@ class ModelTrainer:
                 obj = best_model
             )
             predicted = best_model.predict(X_test)
-            r2_score = r2_score(y_test, predicted)
-            return r2_score
+            r2_square = r2_score(y_test, predicted)
+            return r2_square
 
         except Exception as e:
             raise CustomException(e, sys)

@@ -10,7 +10,6 @@ def get_requirements(file_path:str)->List[str]:
     req_list = []
     with open(file_path) as file_obj:
         req_list = file_obj.readlines()
-        file_obj.close()
         req_list = [req.replace("\n", "") for req in req_list]
         if HYPHEN_E_DOT in req_list:
             req_list.remove(HYPHEN_E_DOT)
