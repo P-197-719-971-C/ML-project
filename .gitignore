@@ -2,8 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+#Extra file appeard in while creating venv
 .DS_Store
+
+# artifact directories
+.artifacts
 # C extensions
 *.so
 
